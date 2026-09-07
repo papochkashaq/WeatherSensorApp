@@ -1,60 +1,60 @@
 # WeatherSensorApp
 
-REST API для регистрации метеорологических датчиков и учёта их показаний (температура, наличие осадков).
+A REST API for registering meteorological sensors and tracking their readings (temperature, precipitation).
 
-Проект реализован на Spring Boot и хранит данные в PostgreSQL. Каждый датчик (`Sensor`) может иметь множество измерений (`Measurement`), связанных с ним по внешнему ключу.
+The project is built with Spring Boot and stores data in PostgreSQL. Each sensor (`Sensor`) can have multiple measurements (`Measurement`) linked to it via a foreign key.
 
-## Стек технологий
+## Technology Stack
 
 - **Java 11**
 - **Spring Boot 2.5.3**
-  - Spring Web (REST-контроллеры)
-  - Spring Data JPA (доступ к БД)
-  - Spring Boot Validation (валидация входных данных)
-  - Thymeleaf (шаблонизатор)
-- **PostgreSQL** — основная СУБД
-- **ModelMapper** — маппинг между сущностями и DTO
-- **Lombok** — уменьшение шаблонного кода
-- **Maven** — сборка проекта
+  - Spring Web (REST controllers)
+  - Spring Data JPA (database access)
+  - Spring Boot Validation (input data validation)
+  - Thymeleaf (template engine)
+- **PostgreSQL** — primary database
+- **ModelMapper** — mapping between entities and DTOs
+- **Lombok** — reducing boilerplate code
+- **Maven** — project build tool
 
-## Структура проекта
+## Project Structure
 
 ```
 src/main/java/com/alderson/WeatherSensor/
-├── WeatherSensorAppApplication.java   # точка входа Spring Boot
+├── WeatherSensorAppApplication.java   # Spring Boot entry point
 ├── config/
-│   └── AppConfig.java                 # бин ModelMapper
+│   └── AppConfig.java                 # ModelMapper bean
 ├── controllers/
-│   ├── SensorController.java          # REST-эндпоинты для датчиков
-│   └── MeasurementController.java     # REST-эндпоинты для измерений
+│   ├── SensorController.java          # REST endpoints for sensors
+│   └── MeasurementController.java     # REST endpoints for measurements
 ├── dto/
-│   ├── SensorDTO.java                 # DTO датчика + валидация
-│   └── MeasurementDTO.java            # DTO измерения + валидация
+│   ├── SensorDTO.java                 # Sensor DTO + validation
+│   └── MeasurementDTO.java            # Measurement DTO + validation
 ├── models/
-│   ├── Sensor.java                    # JPA-сущность "sensor"
-│   └── Measurement.java               # JPA-сущность "measurement"
+│   ├── Sensor.java                    # JPA entity "sensor"
+│   └── Measurement.java               # JPA entity "measurement"
 ├── repositories/
-│   ├── SensorRepository.java          # Spring Data JPA репозиторий
-│   └── MeasurementRepository.java     # Spring Data JPA репозиторий
+│   ├── SensorRepository.java          # Spring Data JPA repository
+│   └── MeasurementRepository.java     # Spring Data JPA repository
 ├── services/
-│   ├── SensorService.java             # бизнес-логика датчиков
-│   └── MeasurementService.java        # бизнес-логика измерений
+│   ├── SensorService.java             # Sensor business logic
+│   └── MeasurementService.java        # Measurement business logic
 └── utils/
-    ├── GlobalExceptionHandler.java        # централизованная обработка ошибок
-    ├── SensorDuplicateNameException.java  # исключение: датчик уже существует
-    ├── SensorNotFoundException.java       # исключение: датчик не найден
-    └── SensorErrorResponse.java           # модель тела ответа об ошибке
+    ├── GlobalExceptionHandler.java        # centralized error handling
+    ├── SensorDuplicateNameException.java  # exception: sensor already exists
+    ├── SensorNotFoundException.java       # exception: sensor not found
+    └── SensorErrorResponse.java           # error response body model
 ```
 
-## Требования
+## Requirements
 
 - JDK 11+
-- Maven 3.6+ (либо использовать входящий в проект Maven Wrapper `mvnw` / `mvnw.cmd`)
-- PostgreSQL (запущенный локально или доступный по сети)
+- Maven 3.6+ (or use the bundled Maven Wrapper `mvnw` / `mvnw.cmd`)
+- PostgreSQL (running locally or accessible over the network)
 
-## Настройка базы данных
+## Database Configuration
 
-Настройки подключения к БД задаются в [`application.properties`](src/main/resources/application.properties:1):
+Database connection settings are defined in [`application.properties`](src/main/resources/application.properties:1):
 
 ```properties
 server.port=8081
@@ -71,14 +71,14 @@ spring.sql.init.mode=always
 spring.jpa.hibernate.ddl-auto=update
 ```
 
-Перед запуском:
-1. Убедитесь, что PostgreSQL запущен и доступна база данных `postgres` (или измените `spring.datasource.url` на нужную).
-2. При необходимости обновите `spring.datasource.username` и `spring.datasource.password` под свои учётные данные.
-3. Таблицы `sensor` и `measurement` создаются/обновляются автоматически благодаря `spring.jpa.hibernate.ddl-auto=update`.
+Before running the application:
+1. Make sure PostgreSQL is running and the `postgres` database is accessible (or change `spring.datasource.url` to the desired one).
+2. If necessary, update `spring.datasource.username` and `spring.datasource.password` with your own credentials.
+3. The `sensor` and `measurement` tables are created/updated automatically thanks to `spring.jpa.hibernate.ddl-auto=update`.
 
-## Запуск приложения
+## Running the Application
 
-С помощью Maven Wrapper:
+Using the Maven Wrapper:
 
 ```bash
 # Windows
@@ -88,23 +88,23 @@ mvnw.cmd spring-boot:run
 ./mvnw spring-boot:run
 ```
 
-Либо через установленный Maven:
+Or with a locally installed Maven:
 
 ```bash
 mvn spring-boot:run
 ```
 
-После запуска приложение будет доступно на `http://localhost:8081` (порт задан в `application.properties`).
+Once started, the application will be available at `http://localhost:8081` (the port is set in `application.properties`).
 
 ## API
 
-### Датчики (`/sensors`)
+### Sensors (`/sensors`)
 
-| Метод | Путь              | Описание                     | Тело запроса |
-|-------|--------------------|-------------------------------|---------------|
-| POST  | `/sensors/registration` | Регистрация нового датчика | [`SensorDTO`](src/main/java/com/alderson/WeatherSensor/dto/SensorDTO.java:13) |
+| Method | Path              | Description                     | Request Body |
+|--------|--------------------|-----------------------------------|---------------|
+| POST   | `/sensors/registration` | Register a new sensor | [`SensorDTO`](src/main/java/com/alderson/WeatherSensor/dto/SensorDTO.java:13) |
 
-**Пример запроса:**
+**Example request:**
 
 ```json
 {
@@ -112,22 +112,22 @@ mvn spring-boot:run
 }
 ```
 
-**Валидация:**
-- `name` — обязателен, от 3 до 30 символов.
+**Validation:**
+- `name` — required, from 3 to 30 characters.
 
-**Возможные ошибки:**
-- `409 Conflict` — датчик с таким именем уже существует ([`SensorDuplicateNameException`](src/main/java/com/alderson/WeatherSensor/utils/SensorDuplicateNameException.java:1)).
-- `400 Bad Request` — ошибка валидации полей.
+**Possible errors:**
+- `409 Conflict` — a sensor with this name already exists ([`SensorDuplicateNameException`](src/main/java/com/alderson/WeatherSensor/utils/SensorDuplicateNameException.java:1)).
+- `400 Bad Request` — field validation error.
 
-### Измерения (`/measurements`)
+### Measurements (`/measurements`)
 
-| Метод | Путь                          | Описание                                             | Параметры / Тело |
-|-------|-------------------------------|-------------------------------------------------------|-------------------|
-| GET   | `/measurements`               | Получить список всех измерений либо измерений конкретного датчика | Query-параметр `sensorName` (опционально) |
-| POST  | `/measurements/add`           | Добавить новое измерение                              | [`MeasurementDTO`](src/main/java/com/alderson/WeatherSensor/dto/MeasurementDTO.java:15) |
-| GET   | `/measurements/rainyDaysCount` | Получить количество измерений с осадками (`raining = true`) | — |
+| Method | Path                          | Description                                             | Parameters / Body |
+|--------|-------------------------------|-------------------------------------------------------|-------------------|
+| GET    | `/measurements`               | Get a list of all measurements or measurements for a specific sensor | Query parameter `sensorName` (optional) |
+| POST   | `/measurements/add`           | Add a new measurement                              | [`MeasurementDTO`](src/main/java/com/alderson/WeatherSensor/dto/MeasurementDTO.java:15) |
+| GET    | `/measurements/rainyDaysCount` | Get the count of measurements with precipitation (`raining = true`) | — |
 
-**Пример запроса на добавление измерения:**
+**Example request for adding a measurement:**
 
 ```json
 {
@@ -139,63 +139,63 @@ mvn spring-boot:run
 }
 ```
 
-**Валидация:**
-- `value` — обязателен, диапазон от -100 до 100.
-- `raining` — обязателен (`true`/`false`).
-- `sensor.name` — обязателен, датчик должен быть предварительно зарегистрирован.
+**Validation:**
+- `value` — required, range from -100 to 100.
+- `raining` — required (`true`/`false`).
+- `sensor.name` — required, the sensor must be registered beforehand.
 
-**Возможные ошибки:**
-- `404 Not Found` — датчик с указанным именем не найден ([`SensorNotFoundException`](src/main/java/com/alderson/WeatherSensor/utils/SensorNotFoundException.java:1)).
-- `400 Bad Request` — ошибка валидации полей.
+**Possible errors:**
+- `404 Not Found` — no sensor found with the specified name ([`SensorNotFoundException`](src/main/java/com/alderson/WeatherSensor/utils/SensorNotFoundException.java:1)).
+- `400 Bad Request` — field validation error.
 
-## Обработка ошибок
+## Error Handling
 
-Все исключения перехватываются централизованно в [`GlobalExceptionHandler`](src/main/java/com/alderson/WeatherSensor/utils/GlobalExceptionHandler.java:12) и возвращаются клиенту в едином формате [`SensorErrorResponse`](src/main/java/com/alderson/WeatherSensor/utils/SensorErrorResponse.java:1):
+All exceptions are handled centrally in [`GlobalExceptionHandler`](src/main/java/com/alderson/WeatherSensor/utils/GlobalExceptionHandler.java:12) and returned to the client in a unified format [`SensorErrorResponse`](src/main/java/com/alderson/WeatherSensor/utils/SensorErrorResponse.java:1):
 
 ```json
 {
-  "message": "Текст ошибки",
+  "message": "Error text",
   "timestamp": "2026-09-04T10:00:00"
 }
 ```
 
-| Исключение | HTTP-статус |
+| Exception | HTTP Status |
 |---|---|
 | `SensorDuplicateNameException` | 409 Conflict |
 | `SensorNotFoundException` | 404 Not Found |
-| `MethodArgumentNotValidException` (ошибка валидации `@Valid`) | 400 Bad Request |
+| `MethodArgumentNotValidException` (`@Valid` validation error) | 400 Bad Request |
 
-## Модель данных
+## Data Model
 
 **Sensor**
-- `id` — идентификатор (генерируется автоматически)
-- `name` — уникальное имя датчика
-- `measurements` — список связанных измерений (`OneToMany`)
+- `id` — identifier (generated automatically)
+- `name` — unique sensor name
+- `measurements` — list of related measurements (`OneToMany`)
 
 **Measurement**
-- `id` — идентификатор (генерируется автоматически)
-- `value` — значение показания (например, температура)
-- `raining` — признак осадков
-- `sensor` — ссылка на датчик (`ManyToOne`)
-- `time` — время создания записи (проставляется автоматически при сохранении)
+- `id` — identifier (generated automatically)
+- `value` — reading value (e.g., temperature)
+- `raining` — precipitation flag
+- `sensor` — reference to the sensor (`ManyToOne`)
+- `time` — record creation time (set automatically on save)
 
-## Тестирование
+## Testing
 
-Запуск тестов проекта:
+Run the project tests:
 
 ```bash
 mvnw.cmd test
 ```
 
-## Сборка
+## Build
 
-Сборка исполняемого JAR-файла:
+Build the executable JAR file:
 
 ```bash
 mvnw.cmd clean package
 ```
 
-Собранный артефакт можно запустить командой:
+The built artifact can be run with the command:
 
 ```bash
 java -jar target/WeatherSensorApp-0.0.1-SNAPSHOT.jar
